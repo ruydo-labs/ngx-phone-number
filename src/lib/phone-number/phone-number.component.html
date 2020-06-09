@@ -1,0 +1,76 @@
+<div class="element-flex">
+  <mat-select
+    class="w-20"
+    name="phoneCode"
+    [(ngModel)]="phoneCode"
+    (selectionChange)="codeChanges($event)"
+    [required]="required"
+    [disabled]="disabled"
+  >
+    <mat-select-trigger *ngIf="countryCode">
+      <div class="country-code-option">
+        <div class="option-img-container">
+          <img
+            class="option-img"
+            aria-hidden
+            src="https://www.countryflags.io/{{ countryCode }}/flat/32.png"
+            width="32"
+            height="32"
+          />
+        </div>
+        <span>{{ phoneCode }}</span>
+      </div>
+    </mat-select-trigger>
+
+    <ng-container *ngFor="let codes of countryCodes">
+      <ng-container *ngIf="isString(codes)">
+        <mat-option [value]="countryPhoneNumbers[codes]">
+          <div class="country-code-option">
+            <div class="option-img-container">
+              <img
+                class="option-img"
+                aria-hidden
+                src="https://www.countryflags.io/{{ codes }}/flat/32.png"
+                width="32"
+                height="32"
+              />
+            </div>
+            <span>{{ countryPhoneNumbers[codes] }}</span>
+          </div>
+        </mat-option>
+      </ng-container>
+
+      <ng-container *ngIf="!isString(codes)">
+        <ng-container *ngFor="let code of codes">
+          <mat-option [value]="countryPhoneNumbers[code]">
+            <div class="country-code-option">
+              <div class="option-img-container">
+                <img
+                  class="option-img"
+                  aria-hidden
+                  src="https://www.countryflags.io/{{ code }}/flat/32.png"
+                  width="32"
+                  height="32"
+                />
+              </div>
+              <span>{{ countryPhoneNumbers[code] }}</span>
+            </div>
+          </mat-option>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </mat-select>
+
+  <input
+    class="phoneNumberInput"
+    name="phoneNumber"
+    type="number"
+    matInput
+    [(ngModel)]="phoneNumber"
+    (input)="onNumberInput($event)"
+    class="w-full"
+    [placeholder]="placeholder"
+    [required]="required"
+    [readonly]="!phoneCode ? true : disabled"
+  />
+</div>
