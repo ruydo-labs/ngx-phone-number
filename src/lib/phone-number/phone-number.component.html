@@ -64,10 +64,11 @@
   <input
     class="phoneNumberInput"
     name="phoneNumber"
-    type="number"
+    type="text"
+    pattern="\d*"
     matInput
     [(ngModel)]="phoneNumber"
-    (input)="onNumberInput($event)"
+    (keyup)="onNumberInput($event)"
     class="w-full"
     [placeholder]="placeholder"
     [required]="required"

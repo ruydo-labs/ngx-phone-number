@@ -8,7 +8,6 @@ import { phoneToCountry } from '../phone-to-country';
 import { Subject } from 'rxjs';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { MatSelectChange } from '@angular/material/select';
-import { isArray, isNumber } from 'util';
 
 const regex = /^[+]{1}[0-9]{1,15}$/;
 
@@ -138,11 +137,11 @@ export class PhoneNumberComponent extends MatFormFieldControl<string> implements
         return this.focused || !this.empty;
     }
 
-    public onNumberInput(event: any): void {
-        console.log('onNumberInput', event);
-        console.log(this.phoneCode + event.target.value);
-        console.log(this.phoneCode + this.phoneNumber);
-        console.log(regex.test(this.phoneCode + event.target.value));
+    public onNumberInput(event: any): boolean {
+        if (event.target.value && event.target.value.length > 0) {
+            return regex.test(this.phoneCode + event.target.value);
+        }
+        return true;
     }
 
     public setDescribedByIds(ids: string[]): void {
@@ -190,7 +189,7 @@ export class PhoneNumberComponent extends MatFormFieldControl<string> implements
                                 phoneCode = countryNumber;
                             }
                         }
-                    } else if (isArray(countryNumber)) {
+                    } else if (Array.isArray(countryNumber)) {
 
                         // Por cada numero
                         for (const countryNumber2 of countryNumber) {
