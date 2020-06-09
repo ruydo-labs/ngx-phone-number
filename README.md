@@ -10,7 +10,7 @@ Import the module
 import { NgxPhoneNumberModule } from "@ruydo/ngx-phone-number";
 ```
 
-In the component view
+Use it in the view
 
 ```html
 <mat-form-field class="w-full" appearance="outline">
