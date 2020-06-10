@@ -1,6 +1,9 @@
 {
   "name": "@ruydo/ngx-phone-number",
   "version": "0.0.1",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "peerDependencies": {
     "@angular/common": "^9.1.9",
     "@angular/core": "^9.1.9",
@@ -9,5 +12,20 @@
   },
   "dependencies": {
     "tslib": "^1.10.0"
-  }
+  },
+  "description": "A component for picking phone numbers, that is compatible with Angular Material",
+  "main": "karma.conf.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruydo-labs/ngx-phone-number.git"
+  },
+  "author": "Ruydo Labs. Spa",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ruydo-labs/ngx-phone-number/issues"
+  },
+  "homepage": "https://github.com/ruydo-labs/ngx-phone-number#readme"
 }
