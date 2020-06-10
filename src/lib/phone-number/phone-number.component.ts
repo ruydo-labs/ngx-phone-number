@@ -99,7 +99,6 @@ export class PhoneNumberComponent extends MatFormFieldControl<string> implements
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
-        console.log('changes', changes);
         if (changes.defaultCode) {
             const defaultCode = changes.defaultCode.currentValue;
             const countryPhoneNumber = countryPhone[defaultCode];
