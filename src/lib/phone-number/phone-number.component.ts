@@ -125,17 +125,17 @@ export class PhoneNumberComponent extends MatFormFieldControl<string> implements
      * Valor del campo
      */
     public get value(): string | undefined {
-        if (this.phoneNumber) {
+        if (this.phoneCode && this.phoneNumber) {
             return this.phoneCode + this.phoneNumber;
         }
-        return undefined;
+        return "";
     }
 
     public get shouldLabelFloat() {
         return this.focused || !this.empty;
     }
 
-    public onNumberInput(event: any): boolean {
+    public onKeyPress(event: any): boolean {
         // Carácter agregado
         const char = String.fromCharCode(event.which);
 
@@ -157,6 +157,11 @@ export class PhoneNumberComponent extends MatFormFieldControl<string> implements
         }
 
         return true;
+    }
+
+    public onInput(event: InputEvent) {
+        // Al escribir, actualizar valor
+        this.updateChanges();
     }
 
     public setDescribedByIds(ids: string[]): void {

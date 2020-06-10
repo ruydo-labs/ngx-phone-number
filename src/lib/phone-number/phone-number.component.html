@@ -1,6 +1,6 @@
-<div class="element-flex">
+<div class="element-flex full-height">
   <mat-select
-    class="w-20"
+    class="w-20 full-height"
     name="phoneCode"
     [(ngModel)]="phoneCode"
     (selectionChange)="codeChanges($event)"
@@ -8,16 +8,14 @@
     [disabled]="disabled"
   >
     <mat-select-trigger *ngIf="countryCode">
-      <div class="country-code-option">
-        <div class="option-img-container">
-          <img
-            class="option-img"
-            aria-hidden
-            src="https://www.countryflags.io/{{ countryCode }}/flat/32.png"
-            width="32"
-            height="32"
-          />
-        </div>
+      <div class="option-img-container">
+        <img
+          class="option-img"
+          aria-hidden
+          src="https://www.countryflags.io/{{ countryCode }}/flat/32.png"
+          width="32"
+          height="32"
+        />
         <span>{{ phoneCode }}</span>
       </div>
     </mat-select-trigger>
@@ -62,14 +60,15 @@
   </mat-select>
 
   <input
-    class="phoneNumberInput"
+    class="phoneNumberInput full-height"
     name="phoneNumber"
     type="text"
     pattern="\d*"
     matInput
     [(ngModel)]="phoneNumber"
-    (keypress)="onNumberInput($event)"
-    class="w-full"
+    (keypress)="onKeyPress($event)"
+    (input)="onInput($event)"
+    class="full-width"
     [placeholder]="placeholder"
     [required]="required"
     [readonly]="!phoneCode ? true : disabled"

@@ -3,12 +3,20 @@
   width: 100%;
 }
 
-.w-full {
+.full-width {
   width: 100%;
 }
 
 .w-20 {
   width: 6rem;
+}
+
+.full-height {
+  height: 100%;
+}
+
+.phone-code-trigger {
+  align-items: center;
 }
 
 .option-img {
@@ -19,6 +27,7 @@
   display: flex;
   align-items: center;
   margin-right: 8px;
+  padding-top: 2px;
 }
 
 [dir="rtl"] .option-img-container {
