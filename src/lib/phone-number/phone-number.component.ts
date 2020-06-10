@@ -9,8 +9,6 @@ import { Subject } from 'rxjs';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { MatSelectChange } from '@angular/material/select';
 
-const regex = /^[+]{1}[0-9]{1,15}$/;
-
 @Component({
     selector: 'ngx-phone-number',
     templateUrl: './phone-number.component.html',
@@ -138,9 +136,26 @@ export class PhoneNumberComponent extends MatFormFieldControl<string> implements
     }
 
     public onNumberInput(event: any): boolean {
-        if (event.target.value && event.target.value.length > 0) {
-            return regex.test(this.phoneCode + event.target.value);
+        // Carácter agregado
+        const char = String.fromCharCode(event.which);
+
+        // Si hay caracter
+        if (char) {
+
+            // Longitud de número de pais
+            const phoneCodeLength = this.phoneCode ? this.phoneCode.length : 0;
+            const phoneNumberLength = this.phoneNumber ? this.phoneNumber.length : 0;
+
+            // Si es un número y la longitud es menor o igual a 16
+            if (/^\d+$/.test(char) && (phoneCodeLength + phoneNumberLength + char.length) <= 16) {
+                // Agregar caracter
+                return true;
+            }
+
+            // Impedir agregar caracter
+            return false;
         }
+
         return true;
     }
 

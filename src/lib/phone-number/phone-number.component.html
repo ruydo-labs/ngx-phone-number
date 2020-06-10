@@ -68,7 +68,7 @@
     pattern="\d*"
     matInput
     [(ngModel)]="phoneNumber"
-    (keyup)="onNumberInput($event)"
+    (keypress)="onNumberInput($event)"
     class="w-full"
     [placeholder]="placeholder"
     [required]="required"
