@@ -99,6 +99,7 @@ export class PhoneNumberComponent extends MatFormFieldControl<string> implements
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
+        console.log('changes', changes);
         if (changes.defaultCode) {
             const defaultCode = changes.defaultCode.currentValue;
             const countryPhoneNumber = countryPhone[defaultCode];
@@ -181,7 +182,7 @@ export class PhoneNumberComponent extends MatFormFieldControl<string> implements
     public writeValue(value: string): void {
 
         // Si el valor es un string
-        if (typeof value === 'string') {
+        if (typeof value === 'string' && value.length > 0) {
 
             // Código del país
             let countryCode = "";
@@ -234,7 +235,7 @@ export class PhoneNumberComponent extends MatFormFieldControl<string> implements
             this.countryCode = countryCode;
             this.phoneCode = phoneCode;
             this.phoneNumber = phoneNumber;
-        } else {
+        } else if (typeof value === "undefined") {
 
             // Si el código actual era diferente del código por defecto
             if (this.phoneCode !== this.defaultCode) {
