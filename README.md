@@ -15,6 +15,20 @@ The IP geolocation data is provided by https://www.ip2location.com
 
 ## Usage
 
+Copy the assets into your Angular project.
+
+```json
+"assets": [
+  "src/favicon.ico",
+  "src/assets",
+  {
+    "glob": "**/*",
+    "input": "node_modules/@ruydo/ngx-phone-number/assets/images/flags/",
+    "output": "assets/images/flags/"
+  }
+],
+```
+
 Import the module
 
 ```typescript
