@@ -2,6 +2,17 @@
 
 A component for picking phone numbers, that is compatible with Angular Material
 
+## Data source
+
+It is using data from the following sources
+
+```
+http://country.io/data/
+https://stefangabos.github.io/world_countries/
+```
+
+The IP geolocation data is provided by https://www.ip2location.com
+
 ## Usage
 
 Import the module

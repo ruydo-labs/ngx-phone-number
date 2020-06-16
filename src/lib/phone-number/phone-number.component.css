@@ -3,6 +3,16 @@
   width: 100%;
 }
 
+.country-name {
+  margin-right: 8px;
+}
+
+.select-viewport {
+  overflow-x: hidden;
+  width: 312px;
+  height: 250px;
+}
+
 .full-width {
   width: 100%;
 }
@@ -20,6 +30,8 @@
 }
 
 .option-img {
+  min-width: 32px;
+  min-height: 32px;
   vertical-align: middle;
 }
 

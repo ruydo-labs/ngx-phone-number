@@ -1,13 +1,13 @@
-import { Component, OnInit, Input, ElementRef, forwardRef, SimpleChanges, OnChanges, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, forwardRef, SimpleChanges, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { MatFormFieldControl } from '@angular/material/form-field';
-import { countryName } from '../names';
-import { countryPhone } from '../phone';
-import { phoneToCountry } from '../phone-to-country';
 import { Subject } from 'rxjs';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { MatSelectChange } from '@angular/material/select';
+import { countriesNames } from "../countries/countries";
+import { CountryCodeAndPhone, countriesAndPhones, countryAndPhoneOfFullPhoneNumber } from "../countries-and-phones";
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 
 @Component({
     selector: 'ngx-phone-number',
@@ -31,13 +31,19 @@ import { MatSelectChange } from '@angular/material/select';
 })
 export class PhoneNumberComponent extends MatFormFieldControl<string> implements OnInit, OnDestroy, OnChanges, ControlValueAccessor {
 
-    public countryCodes = Object.keys(countryName).sort();
-    public countryNames = countryName;
-    public countryPhoneNumbers = countryPhone;
-    public phoneToCountry = phoneToCountry;
+    public countryNames = countriesNames;
+    public countriesAndPhones = countriesAndPhones;
 
     @Input()
     public defaultCode: string;
+
+    @Input()
+    get showCountriesNames(): boolean { return this._showCountriesNames; }
+    set showCountriesNames(value: boolean) {
+        this._showCountriesNames = coerceBooleanProperty(value);
+        this.stateChanges.next();
+    }
+    private _showCountriesNames = true;
 
     @Input()
     public placeholder: string;
@@ -58,8 +64,7 @@ export class PhoneNumberComponent extends MatFormFieldControl<string> implements
     }
     private _disabled = false;
 
-    public countryCode: string;
-    public phoneCode: string;
+    public countryCodeAndPhone: CountryCodeAndPhone;
     public phoneNumber: string;
 
     public stateChanges = new Subject<void>();
@@ -70,9 +75,12 @@ export class PhoneNumberComponent extends MatFormFieldControl<string> implements
     public onTouched: () => void = () => { };
     public isString = (value: any) => typeof value === 'string';
 
+    @ViewChild(CdkVirtualScrollViewport)
+    public cdkVirtualScrollViewport: CdkVirtualScrollViewport;
+
     public constructor(
         private _focusMonitor: FocusMonitor,
-        private _elementRef: ElementRef<HTMLElement>,
+        private _elementRef: ElementRef<HTMLElement>
     ) {
         super();
 
@@ -89,46 +97,41 @@ export class PhoneNumberComponent extends MatFormFieldControl<string> implements
         }
     }
 
-    public ngOnInit() {
-
+    public ngOnInit(): void {
+        // Emitir primer valor
+        this.updateChanges();
     }
 
-    public ngOnDestroy() {
+    public ngOnDestroy(): void {
         this.stateChanges.complete();
         this._focusMonitor.stopMonitoring(this._elementRef);
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
         if (changes.defaultCode) {
+            // Código por defecto
             const defaultCode = changes.defaultCode.currentValue;
-            const countryPhoneNumber = countryPhone[defaultCode];
 
-            if (countryPhoneNumber) {
-                this.defaultCode = countryPhoneNumber;
-                this.countryCode = defaultCode;
-                this.phoneCode = countryPhoneNumber;
-            }
+            // Buscar país y número asociado al código
+            this.countryCodeAndPhone = countriesAndPhones.find(countryAndPhone => countryAndPhone.countryCode === defaultCode);
         }
     }
 
     public codeChanges(event: MatSelectChange): void {
         if (event.value) {
-            // Cambiar código de país
-            this.countryCode = phoneToCountry[event.value];
-
             // Actualizar cambio
             this.updateChanges();
         }
     }
 
     /**
-     * Valor del campo
+     * Valor del componente
      */
     public get value(): string | undefined {
-        if (this.phoneCode && this.phoneNumber) {
-            return this.phoneCode + this.phoneNumber;
+        if (this.countryCodeAndPhone && this.phoneNumber && this.phoneNumber.length > 0) {
+            return this.countryCodeAndPhone.countryPhone + this.phoneNumber;
         }
-        return "";
+        return null;
     }
 
     public get shouldLabelFloat() {
@@ -143,7 +146,7 @@ export class PhoneNumberComponent extends MatFormFieldControl<string> implements
         if (char) {
 
             // Longitud de número de pais
-            const phoneCodeLength = this.phoneCode ? this.phoneCode.length : 0;
+            const phoneCodeLength = this.countryCodeAndPhone ? this.countryCodeAndPhone.countryPhone.length : 0;
             const phoneNumberLength = this.phoneNumber ? this.phoneNumber.length : 0;
 
             // Si es un número y la longitud es menor o igual a 16
@@ -184,63 +187,23 @@ export class PhoneNumberComponent extends MatFormFieldControl<string> implements
         if (typeof value === 'string' && value.length > 0) {
 
             // Código del país
-            let countryCode = "";
-            let phoneCode = "";
+            let countryAndPhone = countryAndPhoneOfFullPhoneNumber(value);
 
-            // Por cada código de país
-            for (const code of this.countryCodes) {
+            // Si se encontró el país y el número
+            if (countryAndPhone) {
+                // Fijar país y número
+                this.countryCodeAndPhone = countryAndPhone;
 
-                // Número del país
-                const countryNumber = this.countryPhoneNumbers[code];
-
-                // Si hay número
-                if (countryNumber !== undefined) {
-
-                    // Si el número es string
-                    if (typeof countryNumber === 'string') {
-
-                        // Si la longitud es mayor que la actual
-                        if (countryNumber.length > phoneCode.length) {
-
-                            // Si el código coincide
-                            if (value.substr(0, countryNumber.length) === countryNumber) {
-                                // Asignar código
-                                countryCode = code;
-                                phoneCode = countryNumber;
-                            }
-                        }
-                    } else if (Array.isArray(countryNumber)) {
-
-                        // Por cada numero
-                        for (const countryNumber2 of countryNumber) {
-
-                            // Si la longitud es mayor que la actual
-                            if (countryNumber2.length > phoneCode.length) {
-
-                                // Si el código coincide
-                                if (value.substr(0, countryNumber2.length) === countryNumber2) {
-                                    // Asignar código
-                                    phoneCode = countryNumber2;
-                                }
-                            }
-                        }
-                    }
-                }
+                // Fijar número
+                this.phoneNumber = value.substr(this.countryCodeAndPhone.countryPhone.length);
             }
 
-            // Número telefónico
-            const phoneNumber = value.substr(phoneCode.length);
-
-            this.countryCode = countryCode;
-            this.phoneCode = phoneCode;
-            this.phoneNumber = phoneNumber;
         } else if (typeof value === "undefined") {
 
             // Si el código actual era diferente del código por defecto
-            if (this.phoneCode !== this.defaultCode) {
+            if (this.countryCodeAndPhone.countryCode !== this.defaultCode) {
                 // Quitar código actual
-                this.countryCode = undefined;
-                this.phoneCode = undefined;
+                this.countryCodeAndPhone = undefined;
             }
 
             // Quitar número
@@ -256,6 +219,12 @@ export class PhoneNumberComponent extends MatFormFieldControl<string> implements
 
     public registerOnTouched(fn: any): void {
         this.onTouched = fn;
+    }
+
+    public openChange($event: boolean) {
+        // Mostrar virtual scroll
+        this.cdkVirtualScrollViewport.checkViewportSize();
+        this.cdkVirtualScrollViewport.scrollToIndex(Math.max(countriesAndPhones.indexOf(this.countryCodeAndPhone) - 2, 0));
     }
 
 }

@@ -1,62 +1,64 @@
 <div class="element-flex full-height">
   <mat-select
     class="country-select full-height"
-    name="phoneCode"
-    [(ngModel)]="phoneCode"
+    name="countryCodeAndPhone"
+    [(ngModel)]="countryCodeAndPhone"
     (selectionChange)="codeChanges($event)"
     [required]="required"
     [disabled]="disabled"
+    (openedChange)="openChange($event)"
   >
-    <mat-select-trigger *ngIf="countryCode">
-      <div class="option-img-container">
+    <mat-select-trigger>
+      <div class="option-img-container" *ngIf="countryCodeAndPhone">
         <img
           class="option-img"
           aria-hidden
-          src="https://www.countryflags.io/{{ countryCode }}/flat/32.png"
+          src="https://www.countryflags.io/{{
+            countryCodeAndPhone.countryCode
+          }}/flat/32.png"
           width="32"
           height="32"
         />
-        <span>{{ phoneCode }}</span>
+        <span>{{ countryCodeAndPhone.countryPhone }}</span>
       </div>
     </mat-select-trigger>
 
-    <ng-container *ngFor="let codes of countryCodes">
-      <ng-container *ngIf="isString(codes)">
-        <mat-option [value]="countryPhoneNumbers[codes]">
+    <!-- Opción oculta -->
+    <ng-container
+      *ngIf="countryCodeAndPhone && countryCodeAndPhone.countryPhone"
+    >
+      <mat-option [value]="countryCodeAndPhone" style="display: none;">
+      </mat-option>
+    </ng-container>
+
+    <cdk-virtual-scroll-viewport
+      itemSize="48"
+      minBufferPx="200"
+      maxBufferPx="400"
+      class="select-viewport"
+    >
+      <ng-container *cdkVirtualFor="let countryPhone of countriesAndPhones">
+        <mat-option [value]="countryPhone" *ngIf="countryPhone.countryPhone">
           <div class="country-code-option">
             <div class="option-img-container">
               <img
                 class="option-img"
                 aria-hidden
-                src="https://www.countryflags.io/{{ codes }}/flat/32.png"
+                src="https://www.countryflags.io/{{
+                  countryPhone.countryCode
+                }}/flat/32.png"
                 width="32"
                 height="32"
               />
             </div>
-            <span>{{ countryPhoneNumbers[codes] }}</span>
+            <span *ngIf="showCountriesNames" class="country-name">
+              {{ countryNames[countryPhone.countryCode] }}
+            </span>
+            <span>{{ countryPhone.countryPhone }}</span>
           </div>
         </mat-option>
       </ng-container>
-
-      <ng-container *ngIf="!isString(codes)">
-        <ng-container *ngFor="let code of codes">
-          <mat-option [value]="countryPhoneNumbers[code]">
-            <div class="country-code-option">
-              <div class="option-img-container">
-                <img
-                  class="option-img"
-                  aria-hidden
-                  src="https://www.countryflags.io/{{ code }}/flat/32.png"
-                  width="32"
-                  height="32"
-                />
-              </div>
-              <span>{{ countryPhoneNumbers[code] }}</span>
-            </div>
-          </mat-option>
-        </ng-container>
-      </ng-container>
-    </ng-container>
+    </cdk-virtual-scroll-viewport>
   </mat-select>
 
   <input
@@ -71,6 +73,6 @@
     class="full-width"
     [placeholder]="placeholder"
     [required]="required"
-    [readonly]="!phoneCode ? true : disabled"
+    [readonly]="!countryCodeAndPhone ? true : disabled"
   />
 </div>
